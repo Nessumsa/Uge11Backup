@@ -1,6 +1,8 @@
 package com.example.uge11;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -8,6 +10,8 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.DateFormat;
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -24,16 +28,22 @@ public class HelloApplication extends Application {
         //defining the axes
         final NumberAxis xAxis = new NumberAxis();
         final NumberAxis yAxis = new NumberAxis();
+        final CategoryAxis xxAxis = new CategoryAxis();
         xAxis.setLabel("Number of Month");
         //creating the chart
-        final LineChart<Number,Number> lineChart =
-                new LineChart<Number,Number>(xAxis,yAxis);
+        final LineChart<String,Number> lineChart =
+                new LineChart<String,Number>(xxAxis,yAxis);
 
         lineChart.setTitle("Stock Monitoring, 2010");
         xAxis.setAutoRanging(false);
         xAxis.setLowerBound(0.5);
         xAxis.setUpperBound(12);
         xAxis.setTickUnit(1);
+        yAxis.setAutoRanging(false);
+        yAxis.setTickUnit(500);
+        xxAxis.setEndMargin(0.5);
+
+
 
 
         //defining a series
@@ -82,6 +92,8 @@ public class HelloApplication extends Application {
             );
         }*/
         for(int j = 0; j < buckets.size(); j++) {
+            int tempLowerBound = 90001;
+            int tempUpperBound = 0;
             for (int i = 1; i <= 12; i++) {
                 int tempTotal = 0;
                 for (Record s : buckets.get(j).getData()) {
@@ -91,11 +103,20 @@ public class HelloApplication extends Application {
                 }
                 System.out.println("Month: " + i + " total weight: " + tempTotal);
                 //series.getData().add(new XYChart.Data(1, 23)
-                listOfSeries.get(j).getData().add(new XYChart.Data(i, tempTotal));
+                listOfSeries.get(j).getData().add(new XYChart.Data(new DateFormatSymbols().getMonths()[i-1], tempTotal));
+                if(tempTotal < tempLowerBound){
+                    tempLowerBound = tempTotal;
+                    yAxis.setLowerBound(tempTotal-500);
+                }
+                if(tempTotal > tempUpperBound){
+                    tempUpperBound = tempTotal;
+                    yAxis.setUpperBound(tempTotal+500);
+                }
             }
+            listOfSeries.get(j).setName((buckets.get(j).getFileName().split("[.]"))[0]);
         }
 
-        Scene scene  = new Scene(lineChart,800,600);
+        Scene scene  = new Scene(lineChart,1400,600);
         for(XYChart.Series s : listOfSeries)
         {
             lineChart.getData().add(s);

@@ -19,5 +19,9 @@ public class BucketID {
     public List<Record> getData() {
         return data;
     }
+    public String getFileName(){
+        return file.getName();
+    }
+
 
 }
