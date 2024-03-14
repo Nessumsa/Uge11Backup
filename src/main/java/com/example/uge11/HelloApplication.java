@@ -16,7 +16,8 @@ import java.util.Scanner;
 public class HelloApplication extends Application {
 
     Scanner scanner = null;
-    List<Record> data = new ArrayList<>();
+    List<BucketID> buckets = new ArrayList<>();
+    List<XYChart.Series> listOfSeries = new ArrayList<>();
 
     @Override public void start(Stage stage) throws FileNotFoundException {
         stage.setTitle("Line Chart Sample");
@@ -47,7 +48,12 @@ public class HelloApplication extends Application {
 
         //series.getData().add(new XYChart.Data(1, 23));
 
-        File directory = new File("C:/test/memeTest/Vejlevej_129.txt");
+        File directory = new File("C:/test/memeTest");
+
+        for (File file : directory.listFiles()) {
+            buckets.add(new BucketID(file));
+            readContent(file);
+        }
 
 
         /*scanner = new Scanner(directory);
@@ -74,21 +80,19 @@ public class HelloApplication extends Application {
                             Integer.parseInt(tempArray[8]))
             );
         }*/
-        for(int i = 1; i <= 12; i++)
-        {
-            int tempTotal = 0;
-            for(Record s : data)
-            {
-                if(s.month == i)
-                {
-                    tempTotal += Integer.parseInt((s.weight.split(" "))[0]);
+        for(int j = 0; j < buckets.size(); j++) {
+            for (int i = 1; i <= 12; i++) {
+                int tempTotal = 0;
+                for (Record s : buckets.get(j).getData()) {
+                    if (s.month == i) {
+                        tempTotal += Integer.parseInt((s.weight.split(" "))[0]);
+                    }
                 }
+                System.out.println("Month: " + i + " total weight: " + tempTotal);
+                //series.getData().add(new XYChart.Data(1, 23)
+                series.getData().add(new XYChart.Data(i, tempTotal));
             }
-            System.out.println("Month: " + i + " total weight: "+ tempTotal);
-            //series.getData().add(new XYChart.Data(1, 23)
-            series.getData().add(new XYChart.Data(i, tempTotal));
         }
-
 
         Scene scene  = new Scene(lineChart,800,600);
         lineChart.getData().add(series);
@@ -97,7 +101,7 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
         stage.show();
     }
-    private void ReadContent(File directory) {
+    private void readContent(File directory) {
         try  {
             scanner = new Scanner(directory);
             if(scanner.hasNextLine())
@@ -112,7 +116,7 @@ public class HelloApplication extends Application {
                 for (int i = 0; i < tempArray[0].length(); i++) {
                     System.out.println(tempArray[8]);
                 }
-                data.add(new Record(tempArray[0],
+                buckets.get(buckets.size()-1).setData(new Record(tempArray[0],
                         tempArray[1],
                         Integer.parseInt(tempArray[2]),
                         tempArray[3],
