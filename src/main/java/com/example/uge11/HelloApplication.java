@@ -37,13 +37,13 @@ public class HelloApplication extends Application {
 
 
         //defining a series
-        XYChart.Series series = new XYChart.Series();
-        XYChart.Series series2 = new XYChart.Series();
-        XYChart.Series series3 = new XYChart.Series();
+        //XYChart.Series series = new XYChart.Series();
+        //XYChart.Series series2 = new XYChart.Series();
+        //XYChart.Series series3 = new XYChart.Series();
 
-        series.setName("Bucket 1");
-        series2.setName("Bucket 2");
-        series3.setName("Bucket 3");
+        //series.setName("Bucket 1");
+        //series2.setName("Bucket 2");
+        //series3.setName("Bucket 3");
         //populating the series with data
 
         //series.getData().add(new XYChart.Data(1, 23));
@@ -53,6 +53,7 @@ public class HelloApplication extends Application {
         for (File file : directory.listFiles()) {
             buckets.add(new BucketID(file));
             readContent(file);
+            listOfSeries.add(new XYChart.Series());
         }
 
 
@@ -90,12 +91,17 @@ public class HelloApplication extends Application {
                 }
                 System.out.println("Month: " + i + " total weight: " + tempTotal);
                 //series.getData().add(new XYChart.Data(1, 23)
-                series.getData().add(new XYChart.Data(i, tempTotal));
+                listOfSeries.get(j).getData().add(new XYChart.Data(i, tempTotal));
             }
         }
 
         Scene scene  = new Scene(lineChart,800,600);
-        lineChart.getData().add(series);
+        for(XYChart.Series s : listOfSeries)
+        {
+            lineChart.getData().add(s);
+
+        }
+
 
 
         stage.setScene(scene);
